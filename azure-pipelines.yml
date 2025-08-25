@@ -18,7 +18,7 @@ parameters:
   - prod
 
 variables:
-  workdir: '$(System.DefaultWorkingDirectory)/environments/${{ parameters.environment }}'
+  workdir: '$(System.DefaultWorkingDirectory)/environment/${{ parameters.environment }}'
   TF_LINT_DIR: 'D:\\tool\\tflint.exe'
 
 pool:
