@@ -12,7 +12,7 @@ parameters:
 - name: environment
   displayName: Environment(dev/prod)
   type: string
-  default: 'dev'
+  default: dev
   values: 
   - dev
   - prod
@@ -38,7 +38,7 @@ stages:
 
         
         - task: TerraformTask@5
-          displayName: TerrafomInitCmd
+          displayName: InitCmd
           inputs:
             provider: 'azurerm'
             command: 'init'
@@ -46,6 +46,7 @@ stages:
             backendAzureRmResourceGroupName: 'stateRG'
             backendAzureRmStorageAccountName: 'statstg'
             backendAzureRmContainerName: 'dev-state'
+            workingDirectory: $(workDir)
             backendAzureRmKey: '${{parameters.environment}}.terraform.tfstate'
 
         - task: TerraformTask@5
