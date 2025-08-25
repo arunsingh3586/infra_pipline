@@ -5,12 +5,14 @@ parameters:
 - name: CodeScanning
   displayName: CodeScanning
   type: string
+  default: false
   values:
     - true
     - false
 - name: environment
   displayName: Environment(dev/prod)
   type: string
+  default: 'dev'
   values: 
   - dev
   - prod
@@ -27,7 +29,7 @@ stages:
     displayName: Build-pipline
     jobs:
       - job: Build
-        displayName: 'terraform init'
+        displayName: 'terraform init,validate and Plan'
         steps:
          
         - task: TerraformInstaller@1
@@ -57,7 +59,7 @@ stages:
           inputs:
             provider: 'azurerm'
             command: 'plan'
-
+            workingDirectory: $(workDir)
   - stage: Scanning
     displayName: Scanning  
     jobs:
