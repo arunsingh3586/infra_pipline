@@ -78,6 +78,7 @@ stages:
     displayName: Deploy
     jobs:
       - job: ManualValidation
+        pool: server
         steps:
           - task: ManualValidation@1
             inputs:
