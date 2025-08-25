@@ -1,19 +1,88 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
 
-trigger:none 
+trigger: none 
 
+parameters:
+- name: CodeScanning
+  displayName: CodeScanning
+  type: string
+  values:
+    - true
+    - false
+- name: environment
+  displayName: Environment(dev/prod)
+  type: string
+  values: 
+  - dev
+  - prod
+
+variables:
+  workdir: '$(System.DefaultWorkingDirectory)/environments/${{ parameters.environment }}'
+  TF_LINT_DIR: 'D:\\tool\\tflint.exe'
 
 pool:
-  vmImage: ubuntu-latest
+  name: 16-Aug2025
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
+  - stage: CI-pipline
+    displayName: Build-pipline
+    jobs:
+      - job: Build
+        displayName: 'terraform init'
+        steps:
+         
+        - task: TerraformInstaller@1
+          inputs:
+            terraformVersion: 'latest'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+        
+        - task: TerraformTask@5
+          displayName: TerrafomInitCmd
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            backendServiceArm: 'infra-pipeline'
+            backendAzureRmResourceGroupName: 'stateRG'
+            backendAzureRmStorageAccountName: 'statstg'
+            backendAzureRmContainerName: 'dev-state'
+            backendAzureRmKey: '${{parameters.environment}}.terraform.tfstate'
+
+        - task: TerraformTask@5
+          displayName: TerraformValidate
+          inputs:
+            provider: 'azurerm'
+            command: 'validate'
+
+        - task: TerraformTask@5
+          displayName: TerraformPlan
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+
+  - stage: Scanning
+    displayName: Scanning  
+    jobs:
+      - job: TFLINTScanningWalajob
+        steps:
+          - task: CmdLine@2
+            inputs:
+               script: |
+             
+                  tflint --version
+                  tflint --chdir=$(workdir)
+                #condition: always()
+               
+
+
+
+  - stage: Deploy
+    displayName: Deploy
+    jobs:
+      - job: ManualValidation
+        steps:
+          - task: ManualValidation@1
+            inputs:
+                notifyUsers: 'arunsingh3586@gmail.com'
+                approvers: 'arunsingh3586@gmail.com'
+                instructions: 'Please check new version...'
+      
+       
