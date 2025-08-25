@@ -5,8 +5,6 @@
 
 *.tfvars
 *.tfvars.json
-.terraform.tfstate.lock.info
-
 *.rsuser
 *.suo
 *.user
