@@ -45,7 +45,7 @@ module "sql_db" {
 
 module "aks" {
   depends_on = [module.rg]
-  source     = "../../modules/azurerm_kubernetes_cluster"
+  source     = "../../modules/azurerm_aks"
   aks_name   = "aks-dev-todoapp"
   location   = "centralindia"
   rg_name    = "rg-dev-todoapp"
