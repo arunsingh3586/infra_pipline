@@ -23,7 +23,7 @@ pool:
   name: 16-Aug2025
 
 stages:
-  - stage: CI-pipline
+  - stage: CIpipline
     displayName: Build-pipline
     jobs:
       - job: Build
