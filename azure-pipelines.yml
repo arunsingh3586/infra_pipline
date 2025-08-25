@@ -53,6 +53,7 @@ stages:
           inputs:
             provider: 'azurerm'
             command: 'validate'
+            environmentServiceNameAzureRM: 'infra-pipeline'
 
         - task: TerraformTask@5
           displayName: TerraformPlan
@@ -60,6 +61,7 @@ stages:
             provider: 'azurerm'
             command: 'plan'
             workingDirectory: $(workDir)
+            environmentServiceNameAzureRM: 'infra-pipeline'
   - stage: Scanning
     displayName: Scanning  
     jobs:
