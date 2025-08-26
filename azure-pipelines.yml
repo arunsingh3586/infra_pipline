@@ -76,6 +76,6 @@ stages:
         steps:
           - task: ManualValidation@1
             inputs:
-              notifyUsers: arunsingh3586@gmail.com
-              approvers: arunsingh3586@gmail.com
+              notifyUsers: arunsingh3586@yahoo.com
+              approvers: arunsingh3586@yahoo.com
               instructions: Please check new version...
