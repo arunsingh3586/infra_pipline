@@ -1,0 +1,11 @@
+name: action-infra  # project name
+
+on:       #trigger 
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main 
+    paths-ignore:
+      -    
