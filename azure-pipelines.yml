@@ -1,94 +1,80 @@
-
-trigger: none 
-
+trigger: none
 parameters:
-- name: CodeScanning
-  displayName: CodeScanning
-  type: string
-  default: false
-  values:
-    - true
-    - false
-- name: environment
-  displayName: Environment(dev/prod)
-  type: string
-  default: dev
-  values: 
-  - dev
-  - prod
-
+  - name: CodeScanning
+    displayName: CodeScanning
+    type: string
+    default: false
+    values:
+      - true
+      - false
+  - name: environment
+    displayName: Environment(dev/prod)
+    type: string
+    default: dev
+    values:
+      - dev
+      - prod
 variables:
-  workdir: '$(System.DefaultWorkingDirectory)/enviroment/${{ parameters.environment }}'
-  TF_LINT_DIR: 'D:\\tool\\tflint.exe'
-
+  workdir: $(System.DefaultWorkingDirectory)/enviroment/${{ parameters.environment }}
+  TF_LINT_DIR: D:\\tool\\tflint.exe
 pool:
   name: 16-Aug2025
-
 stages:
-  - stage: CIpipline
-    displayName: Build-pipline
-    jobs:
-      - job: Build
-        displayName: 'terraform init,validate and Plan'
-        steps:
-         
-        - task: TerraformInstaller@1
-          inputs:
-            terraformVersion: 'latest'
-
-        
-        - task: TerraformTask@5
-          displayName: InitCmd
-          inputs:
-            provider: 'azurerm'
-            command: 'init'
-            backendServiceArm: 'infra-pipeline'
-            backendAzureRmResourceGroupName: 'stateRG'
-            backendAzureRmStorageAccountName: 'statstg'
-            backendAzureRmContainerName: 'dev-state'
-            workingDirectory: $(workDir)
-            backendAzureRmKey: '${{parameters.environment}}.terraform.tfstate'
-
-        - task: TerraformTask@5
-          displayName: TerraformValidate
-          inputs:
-            provider: 'azurerm'
-            command: 'validate'
-            environmentServiceNameAzureRM: 'infra-pipeline'
-
-        - task: TerraformTask@5
-          displayName: TerraformPlan
-          inputs:
-            provider: 'azurerm'
-            command: 'plan'
-            workingDirectory: $(workDir)
-            environmentServiceNameAzureRM: 'infra-pipeline'
-  - stage: Scanning
-    displayName: Scanning  
+  - stage: ScanningTFLINT
+    displayName: Code-Scanning
     jobs:
       - job: TFLINTScanningWalajob
         steps:
           - task: CmdLine@2
             inputs:
-               script: |
-             
-                  tflint --version
-                  tflint --chdir=$(workdir)
-                #condition: always()
-               
+              script: |
 
-
-
+                tflint --version
+                tflint --chdir=$(workdir)
+  - stage: CIpipline
+    displayName: Build-pipline
+    condition: succeededOrFailed()
+    jobs:
+      - job: Build
+        displayName: terraform init,validate and Plan
+        steps:
+          - task: TerraformInstaller@1
+            inputs:
+              terraformVersion: latest
+          - task: TerraformTask@5
+            displayName: InitCmd
+            inputs:
+              provider: azurerm
+              command: init
+              backendServiceArm: infra-pipeline
+              backendAzureRmResourceGroupName: stateRG
+              backendAzureRmStorageAccountName: statstg
+              backendAzureRmContainerName: dev-state
+              workingDirectory: $(workdir)
+              backendAzureRmKey: ${{parameters.environment}}.terraform.tfstate
+          - task: TerraformTask@5
+            displayName: TerraformValidate
+            inputs:
+              provider: azurerm
+              command: validate
+              environmentServiceNameAzureRM: infra-pipeline
+          - task: TerraformTask@5
+            displayName: TerraformPlan
+            inputs:
+              provider: azurerm
+              command: plan
+              workingDirectory: $(workdir)
+              environmentServiceNameAzureRM: infra-pipeline
   - stage: Deploy
     displayName: Deploy
+    dependsOn: CIpipline
+    condition: succeeded()
     jobs:
       - job: ManualValidation
         pool: server
         steps:
           - task: ManualValidation@1
             inputs:
-                notifyUsers: 'arunsingh3586@gmail.com'
-                approvers: 'arunsingh3586@gmail.com'
-                instructions: 'Please check new version...'
-      
-       
+              notifyUsers: arunsingh3586@gmail.com
+              approvers: arunsingh3586@gmail.com
+              instructions: Please check new version...
