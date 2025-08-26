@@ -4,6 +4,7 @@ RG_map = {
       
        name = "dev-rg1"
        location= "centralindia"
+       tags= "dev"
        
     }
     # rg2={
