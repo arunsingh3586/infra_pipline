@@ -7,8 +7,8 @@ on:       #trigger
   pull_request:
     branches:
       - main 
-    paths-ignore:
-      - .github/workflows/infra1.yml
+    # paths-ignore:
+    #   - .github/workflows/infra1.yml
 
 env:
 RESOURCE_NAME: ${{ secrets.RESOURCE_NAME }}
