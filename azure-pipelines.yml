@@ -69,7 +69,7 @@ stages:
   - stage: Deploy
     displayName: Deploy
     dependsOn: CIpipline
-    condition: succeeded()
+    #condition: succeeded()
     jobs:
       - job: ManualValidation
         pool: server
