@@ -63,6 +63,7 @@ stages:
             inputs:
               provider: azurerm
               command: plan
+              commandOptions: '-var-file=$(workdir)/${{ parameters.environment }}.tfvars'
               workingDirectory: $(workdir)
               environmentServiceNameAzureRM: infra-pipeline
   - stage: Deploy
