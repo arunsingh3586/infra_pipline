@@ -68,8 +68,8 @@ stages:
               environmentServiceNameAzureRM: infra-pipeline
   - stage: Deploy
     displayName: Deploy
-    #dependsOn: CIpipline
-    #condition: succeeded()
+    dependsOn: CIpipline
+    condition: succeeded()
     jobs:
       - job: ManualValidation
         pool: server
