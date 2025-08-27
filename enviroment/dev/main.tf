@@ -6,11 +6,12 @@ locals {
 
   }
 }
-variable "RG_map" {}
-module "rg"{
-    source = "../../modules/azurerm_resource_group"
-     RG_map=var.RG_map
-  
+
+module "rg" {
+  source   = "../../modules/azurerm_resource_group"
+  rg_name  = "dev-rg1"
+  location = "centralindia"
+  #tags     = local.common_tags
 }
 
 

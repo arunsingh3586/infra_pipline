@@ -1,12 +1,12 @@
-RG_map = {
+# RG_map = {
 
-    rg1={
+#     rg1={
       
-       name = "dev-rg1"
-       location= "centralindia"
-      # tags= "dev"
+#        name = "dev-rg1"
+#        location= "centralindia"
+#       # tags= "dev"
        
-    }
+#     }
     # rg2={
       
     #    name = "prod-rg2"
